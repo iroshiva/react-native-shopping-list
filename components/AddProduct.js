@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Pressable,
@@ -10,6 +10,7 @@ import {
 
 const AddProduct = ({ onAddProduct }) => {
   const [product, setProduct] = useState("");
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const inputHandler = (val) => {
     setProduct(val);
@@ -19,7 +20,15 @@ const AddProduct = ({ onAddProduct }) => {
   const handleClick = () => {
     onAddProduct(product);
     setProduct("");
-  }
+  };
+
+  useEffect(() => {
+    if(product.length > 0){
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [product])
 
   return (
     <View style={styles.inputContainer}>
@@ -30,7 +39,7 @@ const AddProduct = ({ onAddProduct }) => {
         onChangeText={inputHandler}
       />
       {/* { Remplace le <Button> si besoin de style custom } : Button ne prend pas d'argument style */}
-      <Pressable style={styles.button} onPress={handleClick}>
+      <Pressable style={[styles.button, {backgroundColor: isDisabled ? "#607D8B" : "black" }]} onPress={handleClick} disabled={isDisabled}>
         <Text style={styles.textButton}>Valider</Text>
       </Pressable>
     </View>
