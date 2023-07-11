@@ -1,27 +1,32 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import Colors from "../constants/colors";
 
 const Product = ({ product, onRemoveProduct }) => {
   return (
-    <Pressable
-      onPress={() => onRemoveProduct(product.id)}
-    >
-      <View style={styles.productItems}>
-        <Text style={styles.item}>{product.name}</Text>
-      </View>
-    </Pressable>
+    <View style={styles.productItems}>
+      <Text style={styles.item}>{product.name}</Text>
+      <Pressable onPress={() => onRemoveProduct(product.id)}>
+        <Entypo name="cross" size={30} color="black" />
+      </Pressable>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   productItems: {
     marginTop: 10,
+    backgroundColor: Colors.white,
+    borderRadius: 4,
+    padding: 20,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   item: {
-    backgroundColor: "#ffb6c1",
-    padding: 20,
-    // marginTop && marginBottom
-    marginVertical: 10,
-    fontSize: 17,
+    marginHorizontal: 10,
+    fontSize: 20,
   },
 });
 

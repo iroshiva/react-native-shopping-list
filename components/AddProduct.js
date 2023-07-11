@@ -1,19 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Button,
-  Pressable,
+  Modal,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from "react-native";
+import ButtonComponent from "./ButtonComponent";
+import Colors from "../constants/colors";
+import InputComponent from "./InputComponent";
+import BodyText from "./BodyText";
+import AppStyles from "../constants/AppStyles";
 
-const AddProduct = ({ onAddProduct }) => {
+const AddProduct = ({
+  onAddProduct,
+  isModalAddProduct,
+  setIsModalAddProduct,
+}) => {
   const [product, setProduct] = useState("");
-  const [isDisabled, setIsDisabled] = useState(true);
 
   const inputHandler = (val) => {
-    setProduct(val);
+    // vérification d'entrée de l'input
+    // filtre l'input en n'acceptant que les lettres et NON les chiffres
+    const regex = /[^a-z]/gi;
+    setProduct(val.replace(regex, ''));
   };
 
   // permet de vider le contenu de l'input ET passer le produit ajouter au composant parent via la props onAddProduct
@@ -22,61 +30,62 @@ const AddProduct = ({ onAddProduct }) => {
     setProduct("");
   };
 
-  useEffect(() => {
-    if(product.length > 0){
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
-  }, [product])
-
   return (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Nouveau produit"
-        value={product}
-        onChangeText={inputHandler}
-      />
-      {/* { Remplace le <Button> si besoin de style custom } : Button ne prend pas d'argument style */}
-      <Pressable style={[styles.button, {backgroundColor: isDisabled ? "#607D8B" : "black" }]} onPress={handleClick} disabled={isDisabled}>
-        <Text style={styles.textButton}>Valider</Text>
-      </Pressable>
-    </View>
+    <Modal
+      visible={isModalAddProduct}
+      animationType="slide"
+      hardwareAccelerated
+    >
+      <View style={styles.inputContainer}>
+        <BodyText style={{textAlign: "center"}}>Veuillez entrer votre produit</BodyText>
+        <InputComponent 
+          style={styles.textInput} 
+          textPlaceholder="Nouveau produit"
+          onChangeHandler={inputHandler}
+          value={product}
+          maxLength={10}
+          // keyboardType="numeric"
+        />
+        <View style={styles.btnContainer}>
+            <ButtonComponent handleClick={handleClick} style={styles.btnBlue}>Valider</ButtonComponent>
+
+            <ButtonComponent handleClick={() => setIsModalAddProduct(false)} style={styles.btnRed}>
+              Annuler
+            </ButtonComponent>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   inputContainer: {
-    flexDirection: "row",
+    flex: 1,
     marginBottom: 30,
-  },
-  button: {
-    alignItems: "center",
     justifyContent: "center",
-    padding: 15,
-    borderTopEndRadius: 7,
-    borderBottomEndRadius: 7,
-    // elevation: 3,
-    backgroundColor: "black",
-  },
-  textButton: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: "bold",
-    letterSpacing: 0.25,
-    color: "white",
+    padding: 25,
   },
   textInput: {
-    borderColor: "grey",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    padding: 5,
-    paddingLeft: 10,
-    fontSize: 18,
-    // va occuper tout l'espace restant quand élément parent est en flex-direction: row
-    flexGrow: 1,
+    textAlign: "center",
+    fontSize: 19,
+    marginBottom: 20,
+    // borderRadius: 30,
   },
+  btnContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  btnBlue: {
+    backgroundColor: Colors.lightgreen,
+    width: 150,
+    borderRadius: 6
+  },
+  btnRed: {
+    backgroundColor: Colors.red,
+    width: 150,
+    borderRadius: 6
+  }
 });
 
 export default AddProduct;
